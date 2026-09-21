@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Семейный бюджет — учёт доходов и расходов</title>
+    <meta name="description" content="Простой семейный калькулятор бюджета: доходы, расходы, финансовая цель, анализ и экспорт в CSV. Данные остаются в вашем браузере.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="container">
+
+    <header class="header">
+        <div class="header-inner">
+            <a class="logo logo-link" href="index.html">
+                <div class="logo-icon">💰</div>
+                <div>
+                    <h1>Семейный бюджет</h1>
+                    <p>Простой учёт семейных финансов</p>
+                </div>
+            </a>
+            <div class="header-actions">
+                <nav class="site-nav" aria-label="Основное меню">
+                    <a href="index.html" aria-current="page">Главная</a>
+                    <a href="app.html">Калькулятор</a>
+                </nav>
+                <button class="theme-btn" id="themeBtn" title="Переключить тему">🌙</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="landing-hero">
+        <div>
+            <p class="eyebrow">Добро пожаловать</p>
+            <h2 class="hero-title">Соберите семейный бюджет в одном месте</h2>
+            <p class="hero-text">
+                Добавляйте доходы и расходы, следите за остатком, ставьте цель накоплений
+                и смотрите краткий анализ. Всё считается сразу, без регистрации.
+            </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="app.html">Открыть калькулятор</a>
+                <a class="btn btn-secondary" href="#how">Как это работает</a>
+            </div>
+        </div>
+
+        <aside class="hero-card" aria-hidden="true">
+            <h3>Пример сводки</h3>
+            <div class="preview-row">
+                <span>Доходы</span>
+                <strong class="income-text">120 000 ₽</strong>
+            </div>
+            <div class="preview-row">
+                <span>Расходы</span>
+                <strong class="expense-text">84 500 ₽</strong>
+            </div>
+            <div class="preview-row">
+                <span>Остаток</span>
+                <strong class="balance-text">35 500 ₽</strong>
+            </div>
+            <div class="preview-row">
+                <span>Цель «Отпуск»</span>
+                <strong>24%</strong>
+            </div>
+        </aside>
+    </section>
+
+    <section class="features">
+        <article class="card">
+            <h2 class="card-title">Доходы и расходы</h2>
+            <p class="card-subtitle">Категории, даты, описания и история операций с правкой и удалением.</p>
+        </article>
+        <article class="card">
+            <h2 class="card-title">Цель и анализ</h2>
+            <p class="card-subtitle">Прогресс накоплений по остатку и короткие подсказки по состоянию бюджета.</p>
+        </article>
+        <article class="card">
+            <h2 class="card-title">Только ваш браузер</h2>
+            <p class="card-subtitle">Данные сохраняются локально. Можно скачать CSV или очистить всё за один шаг.</p>
+        </article>
+    </section>
+
+    <section id="how">
+        <div class="card-header">
+            <div>
+                <h2 class="card-title">Как начать</h2>
+                <p class="card-subtitle">Три шага — и бюджет уже на экране</p>
+            </div>
+        </div>
+        <div class="steps">
+            <article class="card">
+                <div class="step-number">1</div>
+                <h3 class="card-title">Откройте калькулятор</h3>
+                <p class="card-subtitle">Перейдите в рабочую часть сайта и выберите доход или расход.</p>
+            </article>
+            <article class="card">
+                <div class="step-number">2</div>
+                <h3 class="card-title">Добавьте операции</h3>
+                <p class="card-subtitle">Укажите сумму, категорию и дату. Сводка обновится сразу.</p>
+            </article>
+            <article class="card">
+                <div class="step-number">3</div>
+                <h3 class="card-title">Поставьте цель</h3>
+                <p class="card-subtitle">Сохраните сумму накоплений и следите за прогрессом по остатку.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div>
+            <h2>Готовы посчитать бюджет семьи?</h2>
+            <p>Калькулятор уже работает — можно заносить операции прямо сейчас.</p>
+        </div>
+        <a class="btn" href="app.html">Перейти к учёту</a>
+    </section>
+
+    <footer class="page-footer">
+        Семейный бюджет · локальный калькулятор без сервера
+    </footer>
+</div>
+
+<script src="js/theme.js"></script>
+</body>
+</html>

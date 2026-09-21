@@ -1,0 +1,2235 @@
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Корректное отображение на телефонах -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Калькулятор семейного бюджета</title>
+
+    <style>
+        /* =========================================================
+           КАЛЬКУЛЯТОР СЕМЕЙНОГО БЮДЖЕТА
+           Все стили находятся внутри этого файла.
+           ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f6fb;
+            color: #1f2937;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* =========================
+           ШАПКА
+           ========================= */
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+            font-size: 34px;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 17px;
+            opacity: 0.95;
+        }
+
+        /* =========================
+           ОСНОВНОЙ КОНТЕЙНЕР
+           ========================= */
+
+        .container {
+            width: min(1200px, calc(100% - 30px));
+            margin: 30px auto 50px;
+        }
+
+        /* =========================
+           КАРТОЧКИ
+           ========================= */
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+        }
+
+        .card h2 {
+            margin: 0 0 20px;
+            font-size: 23px;
+            color: #111827;
+        }
+
+        .card-description {
+            color: #6b7280;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           СВОДКА
+           ========================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .summary-item {
+            border-radius: 15px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+        }
+
+        .summary-title {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 25px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .income-value {
+            color: #15803d;
+        }
+
+        .expense-value {
+            color: #dc2626;
+        }
+
+        .balance-positive {
+            color: #15803d;
+        }
+
+        .balance-negative {
+            color: #dc2626;
+        }
+
+        /* =========================
+           ФОРМЫ
+           ========================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 180px;
+            gap: 14px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            background: white;
+            color: #111827;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        /* =========================
+           КНОПКИ
+           ========================= */
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.94;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .btn-light {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        /* =========================
+           ТАБЛИЦА
+           ========================= */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th,
+        td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        td {
+            color: #4b5563;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .delete-btn {
+            border: none;
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 7px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .delete-btn:hover {
+            background: #fecaca;
+        }
+
+        /* =========================
+           ДИАГРАММА
+           ========================= */
+
+        .chart-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: auto;
+        }
+
+        .pie-chart {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(#e5e7eb 0deg 360deg);
+            box-shadow:
+                inset 0 0 0 1px rgba(0,0,0,0.05),
+                0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .chart-center {
+            position: absolute;
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            background: white;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .chart-center strong {
+            font-size: 18px;
+            color: #111827;
+        }
+
+        .chart-center span {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .legend-name {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .legend-color {
+            width: 13px;
+            height: 13px;
+            border-radius: 4px;
+        }
+
+        /* =========================
+           ПРОГРЕСС
+           ========================= */
+
+        .progress-wrapper {
+            margin-top: 15px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 12px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #2563eb;
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+
+        /* =========================
+           СООБЩЕНИЯ
+           ========================= */
+
+        .message {
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-top: 18px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .message-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .message-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* =========================
+           ПОДСКАЗКА
+           ========================= */
+
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 15px 18px;
+            border-radius: 8px;
+            color: #1e40af;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           ФУТЕР
+           ========================= */
+
+        footer {
+            text-align: center;
+            color: #6b7280;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        /* =========================
+           АДАПТАЦИЯ
+           ========================= */
+
+        @media (max-width: 900px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-grid .full-mobile {
+                grid-column: 1 / -1;
+            }
+
+            .chart-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 25px 15px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .header p {
+                font-size: 15px;
+            }
+
+            .container {
+                width: min(100% - 20px, 1200px);
+                margin-top: 15px;
+            }
+
+            .card {
+                padding: 17px;
+                border-radius: 14px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .summary-item {
+                padding: 14px;
+            }
+
+            .summary-value {
+                font-size: 19px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid .full-mobile {
+                grid-column: auto;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .chart-container {
+                width: 230px;
+                height: 230px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     ШАПКА САЙТА
+     ========================================================= -->
+
+<header class="header">
+    <h1>?? Семейный бюджет</h1>
+    <p>Удобный калькулятор доходов, расходов и накоплений</p>
+</header>
+
+
+<main class="container">
+
+    <!-- =====================================================
+         БЛОК 1. СВОДКА
+         ===================================================== -->
+
+    <section class="card">
+
+        <h2>?? Финансовая сводка</h2>
+
+        <div class="summary-grid">
+
+            <div class="summary-item">
+                <div class="summary-title">Общий доход</div>
+                <div id="totalIncome" class="summary-value income-value">
+                    0 ?
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-title">Общие расходы</div>
+                <div id="totalExpenses" class="summary-value expense-value">
+                    0 ?
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-title">Остаток</div>
+                <div id="balance" class="summary-value balance-positive">
+                    0 ?
+                </div>
+            </div>
+
+            <div class="summary-item">
+                <div class="summary-title">Накопления</div>
+                <div id="savings" class="summary-value">
+                    0 ?
+                </div>
+            </div>
+
+        </div>
+
+        <div class="progress-wrapper">
+
+            <div class="progress-label">
+                <span>Доля расходов от дохода</span>
+                <strong id="expensePercent">0%</strong>
+            </div>
+
+            <div class="progress">
+                <div
+                    id="expenseProgress"
+                    class="progress-bar">
+                </div>
+            </div>
+
+        </div>
+
+        <div
+            id="statusMessage"
+            class="message">
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         БЛОК 2. ДОХОДЫ
+         ===================================================== -->
+
+    <section class="card">
+
+        <h2>?? Доходы</h2>
+
+        <p class="card-description">
+            Добавьте все регулярные и дополнительные доходы семьи.
+        </p>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="incomeName">
+                    Источник дохода
+                </label>
+
+                <input
+                    id="incomeName"
+                    type="text"
+                    placeholder="Например: Зарплата"
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="incomeAmount">
+                    Сумма, ?
+                </label>
+
+                <input
+                    id="incomeAmount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Например: 80000"
+                >
+            </div>
+
+
+            <button
+                id="addIncomeBtn"
+                class="btn btn-success">
+                + Добавить доход
+            </button>
+
+        </div>
+
+
+        <div class="table-wrapper" style="margin-top: 20px;">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Источник</th>
+                        <th>Сумма</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+
+                <tbody id="incomeTable">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         БЛОК 3. РАСХОДЫ
+         ===================================================== -->
+
+    <section class="card">
+
+        <h2>?? Расходы</h2>
+
+        <p class="card-description">
+            Добавьте расходы семьи и выберите соответствующую категорию.
+        </p>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="expenseName">
+                    Название расхода
+                </label>
+
+                <input
+                    id="expenseName"
+                    type="text"
+                    placeholder="Например: Продукты"
+                >
+            </div>
+
+
+            <div class="form-group">
+                <label for="expenseCategory">
+                    Категория
+                </label>
+
+                <select id="expenseCategory">
+
+                    <option value="Продукты">
+                        Продукты
+                    </option>
+
+                    <option value="Жильё">
+                        Жильё
+                    </option>
+
+                    <option value="Коммунальные услуги">
+                        Коммунальные услуги
+                    </option>
+
+                    <option value="Транспорт">
+                        Транспорт
+                    </option>
+
+                    <option value="Здоровье">
+                        Здоровье
+                    </option>
+
+                    <option value="Образование">
+                        Образование
+                    </option>
+
+                    <option value="Одежда">
+                        Одежда
+                    </option>
+
+                    <option value="Развлечения">
+                        Развлечения
+                    </option>
+
+                    <option value="Кредиты">
+                        Кредиты
+                    </option>
+
+                    <option value="Связь и интернет">
+                        Связь и интернет
+                    </option>
+
+                    <option value="Другое">
+                        Другое
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="expenseAmount">
+                    Сумма, ?
+                </label>
+
+                <input
+                    id="expenseAmount"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Например: 15000"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                id="addExpenseBtn"
+                class="btn btn-primary">
+                + Добавить расход
+            </button>
+
+        </div>
+
+
+        <div class="table-wrapper" style="margin-top: 20px;">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Расход</th>
+                        <th>Категория</th>
+                        <th>Сумма</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+
+                <tbody id="expenseTable">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         БЛОК 4. АНАЛИЗ РАСХОДОВ
+         ===================================================== -->
+
+    <section class="card">
+
+        <h2>?? Анализ расходов</h2>
+
+        <div class="chart-section">
+
+            <div>
+
+                <div class="chart-container">
+
+                    <div
+                        id="pieChart"
+                        class="pie-chart">
+                    </div>
+
+                    <div class="chart-center">
+
+                        <strong id="chartTotal">
+                            0 ?
+                        </strong>
+
+                        <span>
+                            расходы
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="legend"
+                class="legend">
+
+                <div class="legend-item">
+                    <span>
+                        Пока нет расходов
+                    </span>
+
+                    <strong>0 ?</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         БЛОК 5. ФИНАНСОВЫЕ ЦЕЛИ
+         ===================================================== -->
+
+    <section class="card">
+
+        <h2>?? Накопления</h2>
+
+        <p class="card-description">
+            Укажите сумму, которую вы хотите откладывать каждый месяц.
+        </p>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label for="savingGoal">
+                    Цель накоплений, ?
+                </label>
+
+                <input
+                    id="savingGoal"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Например: 500000"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="monthlySaving">
+                    Откладывать в месяц, ?
+                </label>
+
+                <input
+                    id="monthlySaving"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Например: 30000"
+                >
+
+            </div>
+
+            <div></div>
+
+        </div>
+
+
+        <div
+            id="savingResult"
+            class="info-box"
+            style="margin-top: 20px;">
+
+            Укажите цель и ежемесячную сумму накоплений.
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         БЛОК 6. УПРАВЛЕНИЕ ДАННЫМИ
+         ===================================================== -->
+
+    <section class="card">
+
+        <h2>?? Управление бюджетом</h2>
+
+        <div class="info-box">
+
+            Все данные сохраняются в памяти браузера.
+            После закрытия страницы данные не должны пропасть,
+            если браузер разрешает использование локального хранилища.
+
+        </div>
+
+        <div class="actions">
+
+            <button
+                id="saveBtn"
+                class="btn btn-success">
+                ?? Сохранить
+            </button>
+
+            <button
+                id="clearBtn"
+                class="btn btn-danger">
+                ?? Очистить всё
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Калькулятор семейного бюджета • Все расчёты выполняются прямо в браузере
+</footer>
+
+
+<script>
+/* ============================================================
+   JAVASCRIPT
+   ЛОГИКА КАЛЬКУЛЯТОРА
+   ============================================================ */
+
+
+/* ============================================================
+   1. ХРАНИЛИЩЕ ДАННЫХ
+   ============================================================ */
+
+let incomes = [];
+let expenses = [];
+
+let savingGoal = 0;
+let monthlySaving = 0;
+
+
+/* ============================================================
+   2. ЦВЕТА ДЛЯ КАТЕГОРИЙ
+   ============================================================ */
+
+const categoryColors = {
+
+    "Продукты": "#2563eb",
+
+    "Жильё": "#7c3aed",
+
+    "Коммунальные услуги": "#0891b2",
+
+    "Транспорт": "#16a34a",
+
+    "Здоровье": "#dc2626",
+
+    "Образование": "#ea580c",
+
+    "Одежда": "#db2777",
+
+    "Развлечения": "#9333ea",
+
+    "Кредиты": "#ca8a04",
+
+    "Связь и интернет": "#0f766e",
+
+    "Другое": "#64748b"
+
+};
+
+
+/* ============================================================
+   3. ПОЛУЧЕНИЕ ЭЛЕМЕНТОВ СТРАНИЦЫ
+   ============================================================ */
+
+const incomeName =
+    document.getElementById("incomeName");
+
+const incomeAmount =
+    document.getElementById("incomeAmount");
+
+const expenseName =
+    document.getElementById("expenseName");
+
+const expenseCategory =
+    document.getElementById("expenseCategory");
+
+const expenseAmount =
+    document.getElementById("expenseAmount");
+
+const incomeTable =
+    document.getElementById("incomeTable");
+
+const expenseTable =
+    document.getElementById("expenseTable");
+
+const totalIncomeElement =
+    document.getElementById("totalIncome");
+
+const totalExpensesElement =
+    document.getElementById("totalExpenses");
+
+const balanceElement =
+    document.getElementById("balance");
+
+const savingsElement =
+    document.getElementById("savings");
+
+const expensePercentElement =
+    document.getElementById("expensePercent");
+
+const expenseProgress =
+    document.getElementById("expenseProgress");
+
+const statusMessage =
+    document.getElementById("statusMessage");
+
+const pieChart =
+    document.getElementById("pieChart");
+
+const chartTotal =
+    document.getElementById("chartTotal");
+
+const legend =
+    document.getElementById("legend");
+
+const savingGoalInput =
+    document.getElementById("savingGoal");
+
+const monthlySavingInput =
+    document.getElementById("monthlySaving");
+
+const savingResult =
+    document.getElementById("savingResult");
+
+
+/* ============================================================
+   4. ФОРМАТИРОВАНИЕ ДЕНЕГ
+   ============================================================ */
+
+function formatMoney(value) {
+
+    return Number(value || 0).toLocaleString("ru-RU", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+    }) + " ?";
+
+}
+
+
+/* ============================================================
+   5. ДОБАВЛЕНИЕ ДОХОДА
+   ============================================================ */
+
+function addIncome() {
+
+    const name =
+        incomeName.value.trim();
+
+    const amount =
+        Number(incomeAmount.value);
+
+
+    if (!name) {
+
+        alert("Введите источник дохода.");
+
+        incomeName.focus();
+
+        return;
+    }
+
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+
+        alert("Введите корректную сумму дохода.");
+
+        incomeAmount.focus();
+
+        return;
+    }
+
+
+    incomes.push({
+
+        id: Date.now(),
+
+        name: name,
+
+        amount: amount
+
+    });
+
+
+    incomeName.value = "";
+    incomeAmount.value = "";
+
+
+    renderAll();
+
+    saveData();
+
+    incomeName.focus();
+}
+
+
+/* ============================================================
+   6. ДОБАВЛЕНИЕ РАСХОДА
+   ============================================================ */
+
+function addExpense() {
+
+    const name =
+        expenseName.value.trim();
+
+    const category =
+        expenseCategory.value;
+
+    const amount =
+        Number(expenseAmount.value);
+
+
+    if (!name) {
+
+        alert("Введите название расхода.");
+
+        expenseName.focus();
+
+        return;
+    }
+
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+
+        alert("Введите корректную сумму расхода.");
+
+        expenseAmount.focus();
+
+        return;
+    }
+
+
+    expenses.push({
+
+        id: Date.now(),
+
+        name: name,
+
+        category: category,
+
+        amount: amount
+
+    });
+
+
+    expenseName.value = "";
+    expenseAmount.value = "";
+
+
+    renderAll();
+
+    saveData();
+
+    expenseName.focus();
+}
+
+
+/* ============================================================
+   7. УДАЛЕНИЕ ДОХОДА
+   ============================================================ */
+
+function deleteIncome(id) {
+
+    incomes =
+        incomes.filter(item => item.id !== id);
+
+    renderAll();
+
+    saveData();
+}
+
+
+/* ============================================================
+   8. УДАЛЕНИЕ РАСХОДА
+   ============================================================ */
+
+function deleteExpense(id) {
+
+    expenses =
+        expenses.filter(item => item.id !== id);
+
+    renderAll();
+
+    saveData();
+}
+
+
+/* ============================================================
+   9. РЕНДЕР ДОХОДОВ
+   ============================================================ */
+
+function renderIncomeTable() {
+
+    incomeTable.innerHTML = "";
+
+
+    if (incomes.length === 0) {
+
+        incomeTable.innerHTML = `
+            <tr>
+                <td colspan="3">
+                    Пока нет добавленных доходов.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    incomes.forEach(item => {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                ${escapeHtml(item.name)}
+            </td>
+
+            <td class="amount">
+                ${formatMoney(item.amount)}
+            </td>
+
+            <td>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteIncome(${item.id})">
+
+                    Удалить
+
+                </button>
+
+            </td>
+        `;
+
+
+        incomeTable.appendChild(row);
+
+    });
+
+}
+
+
+/* ============================================================
+   10. РЕНДЕР РАСХОДОВ
+   ============================================================ */
+
+function renderExpenseTable() {
+
+    expenseTable.innerHTML = "";
+
+
+    if (expenses.length === 0) {
+
+        expenseTable.innerHTML = `
+            <tr>
+                <td colspan="4">
+                    Пока нет добавленных расходов.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    expenses.forEach(item => {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>
+                ${escapeHtml(item.name)}
+            </td>
+
+            <td>
+                ${escapeHtml(item.category)}
+            </td>
+
+            <td class="amount">
+                ${formatMoney(item.amount)}
+            </td>
+
+            <td>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteExpense(${item.id})">
+
+                    Удалить
+
+                </button>
+
+            </td>
+
+        `;
+
+
+        expenseTable.appendChild(row);
+
+    });
+
+}
+
+
+/* ============================================================
+   11. ЗАЩИТА ОТ HTML-КОДА ВВОДА ПОЛЬЗОВАТЕЛЯ
+   ============================================================ */
+
+function escapeHtml(value) {
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+}
+
+
+/* ============================================================
+   12. ПОДСЧЁТ ОБЩЕГО ДОХОДА
+   ============================================================ */
+
+function calculateIncome() {
+
+    return incomes.reduce(
+
+        (sum, item) =>
+            sum + Number(item.amount || 0),
+
+        0
+    );
+}
+
+
+/* ============================================================
+   13. ПОДСЧЁТ ОБЩИХ РАСХОДОВ
+   ============================================================ */
+
+function calculateExpenses() {
+
+    return expenses.reduce(
+
+        (sum, item) =>
+            sum + Number(item.amount || 0),
+
+        0
+    );
+}
+
+
+/* ============================================================
+   14. ОБНОВЛЕНИЕ СВОДКИ
+   ============================================================ */
+
+function updateSummary() {
+
+    const income =
+        calculateIncome();
+
+    const expensesTotal =
+        calculateExpenses();
+
+    const balance =
+        income - expensesTotal;
+
+
+    totalIncomeElement.textContent =
+        formatMoney(income);
+
+    totalExpensesElement.textContent =
+        formatMoney(expensesTotal);
+
+    balanceElement.textContent =
+        formatMoney(balance);
+
+
+    /* Остаток */
+
+    if (balance >= 0) {
+
+        balanceElement.classList.remove(
+            "balance-negative"
+        );
+
+        balanceElement.classList.add(
+            "balance-positive"
+        );
+
+    } else {
+
+        balanceElement.classList.remove(
+            "balance-positive"
+        );
+
+        balanceElement.classList.add(
+            "balance-negative"
+        );
+    }
+
+
+    /* Накопления */
+
+    const availableForSavings =
+        Math.max(balance, 0);
+
+    savingsElement.textContent =
+        formatMoney(availableForSavings);
+
+
+    /* Процент расходов */
+
+    let expensePercent = 0;
+
+
+    if (income > 0) {
+
+        expensePercent =
+            (expensesTotal / income) * 100;
+
+    }
+
+
+    expensePercentElement.textContent =
+        expensePercent.toFixed(1) + "%";
+
+
+    /*
+       Ограничиваем ширину индикатора
+       значением от 0 до 100%.
+    */
+
+    const progressValue =
+        Math.min(expensePercent, 100);
+
+
+    expenseProgress.style.width =
+        progressValue + "%";
+
+
+    /* Статус бюджета */
+
+    statusMessage.className =
+        "message show";
+
+
+    if (income === 0 && expensesTotal === 0) {
+
+        statusMessage.classList.add(
+            "message-warning"
+        );
+
+        statusMessage.textContent =
+            "Добавьте доходы и расходы, чтобы увидеть состояние семейного бюджета.";
+
+    }
+
+    else if (balance > 0) {
+
+        statusMessage.classList.add(
+            "message-success"
+        );
+
+        statusMessage.textContent =
+            "Ваш бюджет находится в плюсе. После покрытия расходов остаются свободные средства.";
+
+    }
+
+    else if (balance === 0) {
+
+        statusMessage.classList.add(
+            "message-warning"
+        );
+
+        statusMessage.textContent =
+            "Доходы полностью покрывают расходы. Свободного остатка нет.";
+
+    }
+
+    else {
+
+        statusMessage.classList.add(
+            "message-danger"
+        );
+
+        statusMessage.textContent =
+            "Внимание: расходы превышают доходы на " +
+            formatMoney(Math.abs(balance)) +
+            ".";
+
+    }
+
+}
+
+
+/* ============================================================
+   15. АНАЛИЗ КАТЕГОРИЙ
+   ============================================================ */
+
+function getCategoryTotals() {
+
+    const totals = {};
+
+
+    expenses.forEach(item => {
+
+        if (!totals[item.category]) {
+
+            totals[item.category] = 0;
+
+        }
+
+
+        totals[item.category] +=
+            Number(item.amount || 0);
+
+    });
+
+
+    return totals;
+}
+
+
+/* ============================================================
+   16. ПОСТРОЕНИЕ ДИАГРАММЫ
+   ============================================================ */
+
+function updateChart() {
+
+    const totals =
+        getCategoryTotals();
+
+    const entries =
+        Object.entries(totals);
+
+    const total =
+        calculateExpenses();
+
+
+    chartTotal.textContent =
+        formatMoney(total);
+
+
+    /* Если расходов нет */
+
+    if (entries.length === 0) {
+
+        pieChart.style.background =
+            "conic-gradient(#e5e7eb 0deg 360deg)";
+
+
+        legend.innerHTML = `
+
+            <div class="legend-item">
+
+                <span>
+                    Пока нет расходов
+                </span>
+
+                <strong>
+                    0 ?
+                </strong>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    let currentDegree = 0;
+
+    const gradients = [];
+
+
+    entries.forEach(([category, amount]) => {
+
+        const percent =
+            amount / total;
+
+        const degrees =
+            percent * 360;
+
+        const start =
+            currentDegree;
+
+        const end =
+            currentDegree + degrees;
+
+
+        const color =
+            categoryColors[category] ||
+            "#64748b";
+
+
+        gradients.push(
+            `${color} ${start}deg ${end}deg`
+        );
+
+
+        currentDegree =
+            end;
+
+    });
+
+
+    pieChart.style.background =
+        `conic-gradient(${gradients.join(", ")})`;
+
+
+    /* Легенда */
+
+    legend.innerHTML = "";
+
+
+    entries
+
+        .sort((a, b) => b[1] - a[1])
+
+        .forEach(([category, amount]) => {
+
+            const percent =
+                total > 0
+                    ? (amount / total) * 100
+                    : 0;
+
+
+            const color =
+                categoryColors[category] ||
+                "#64748b";
+
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "legend-item";
+
+
+            item.innerHTML = `
+
+                <span class="legend-name">
+
+                    <span
+                        class="legend-color"
+                        style="background:${color}">
+                    </span>
+
+                    ${escapeHtml(category)}
+
+                </span>
+
+                <strong>
+                    ${formatMoney(amount)}
+                    (${percent.toFixed(1)}%)
+                </strong>
+
+            `;
+
+
+            legend.appendChild(item);
+
+        });
+
+}
+
+
+/* ============================================================
+   17. РАСЧЁТ ЦЕЛИ НАКОПЛЕНИЙ
+   ============================================================ */
+
+function updateSavings() {
+
+    const goal =
+        Number(savingGoalInput.value) || 0;
+
+    const monthly =
+        Number(monthlySavingInput.value) || 0;
+
+
+    savingGoal =
+        goal;
+
+    monthlySaving =
+        monthly;
+
+
+    if (goal <= 0 || monthly <= 0) {
+
+        savingResult.className =
+            "info-box";
+
+        savingResult.textContent =
+            "Укажите цель и ежемесячную сумму накоплений.";
+
+        return;
+    }
+
+
+    const months =
+        Math.ceil(goal / monthly);
+
+
+    const years =
+        Math.floor(months / 12);
+
+    const remainingMonths =
+        months % 12;
+
+
+    let timeText = "";
+
+
+    if (years > 0) {
+
+        timeText +=
+            years +
+            " " +
+            getYearWord(years);
+
+    }
+
+
+    if (remainingMonths > 0) {
+
+        if (timeText) {
+
+            timeText += " ";
+
+        }
+
+        timeText +=
+            remainingMonths +
+            " " +
+            getMonthWord(remainingMonths);
+
+    }
+
+
+    savingResult.className =
+        "info-box";
+
+
+    savingResult.innerHTML =
+
+        "?? Чтобы накопить <strong>" +
+
+        formatMoney(goal) +
+
+        "</strong>, откладывая по <strong>" +
+
+        formatMoney(monthly) +
+
+        "</strong> в месяц, потребуется примерно <strong>" +
+
+        timeText +
+
+        "</strong>.";
+}
+
+
+/* ============================================================
+   18. ПРАВИЛЬНОЕ ОКОНЧАНИЕ СЛОВА «ГОД»
+   ============================================================ */
+
+function getYearWord(number) {
+
+    const n =
+        Math.abs(number) % 100;
+
+    const n1 =
+        n % 10;
+
+
+    if (n >= 11 && n <= 19) {
+
+        return "лет";
+
+    }
+
+
+    if (n1 === 1) {
+
+        return "год";
+
+    }
+
+
+    if (n1 >= 2 && n1 <= 4) {
+
+        return "года";
+
+    }
+
+
+    return "лет";
+}
+
+
+/* ============================================================
+   19. ПРАВИЛЬНОЕ ОКОНЧАНИЕ СЛОВА «МЕСЯЦ»
+   ============================================================ */
+
+function getMonthWord(number) {
+
+    const n =
+        Math.abs(number) % 100;
+
+    const n1 =
+        n % 10;
+
+
+    if (n >= 11 && n <= 19) {
+
+        return "месяцев";
+
+    }
+
+
+    if (n1 === 1) {
+
+        return "месяц";
+
+    }
+
+
+    if (n1 >= 2 && n1 <= 4) {
+
+        return "месяца";
+
+    }
+
+
+    return "месяцев";
+}
+
+
+/* ============================================================
+   20. СОХРАНЕНИЕ ДАННЫХ
+   ============================================================ */
+
+function saveData() {
+
+    const data = {
+
+        incomes: incomes,
+
+        expenses: expenses,
+
+        savingGoal: savingGoal,
+
+        monthlySaving: monthlySaving
+
+    };
+
+
+    try {
+
+        localStorage.setItem(
+            "familyBudgetData",
+            JSON.stringify(data)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Не удалось сохранить данные:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   21. ЗАГРУЗКА ДАННЫХ
+   ============================================================ */
+
+function loadData() {
+
+    try {
+
+        const saved =
+            localStorage.getItem(
+                "familyBudgetData"
+            );
+
+
+        if (!saved) {
+
+            return;
+
+        }
+
+
+        const data =
+            JSON.parse(saved);
+
+
+        if (Array.isArray(data.incomes)) {
+
+            incomes =
+                data.incomes;
+
+        }
+
+
+        if (Array.isArray(data.expenses)) {
+
+            expenses =
+                data.expenses;
+
+        }
+
+
+        savingGoal =
+            Number(data.savingGoal) || 0;
+
+        monthlySaving =
+            Number(data.monthlySaving) || 0;
+
+
+        savingGoalInput.value =
+            savingGoal || "";
+
+        monthlySavingInput.value =
+            monthlySaving || "";
+
+
+    } catch (error) {
+
+        console.warn(
+            "Не удалось загрузить сохранённые данные:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   22. ПОЛНАЯ ПЕРЕРИСОВКА
+   ============================================================ */
+
+function renderAll() {
+
+    renderIncomeTable();
+
+    renderExpenseTable();
+
+    updateSummary();
+
+    updateChart();
+
+    updateSavings();
+
+}
+
+
+/* ============================================================
+   23. ОЧИСТКА ВСЕГО БЮДЖЕТА
+   ============================================================ */
+
+function clearAll() {
+
+    const confirmed =
+        confirm(
+            "Вы действительно хотите удалить все доходы, расходы и цели накоплений?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    incomes = [];
+
+    expenses = [];
+
+    savingGoal = 0;
+
+    monthlySaving = 0;
+
+
+    savingGoalInput.value = "";
+
+    monthlySavingInput.value = "";
+
+
+    try {
+
+        localStorage.removeItem(
+            "familyBudgetData"
+        );
+
+    } catch (error) {
+
+        console.warn(error);
+
+    }
+
+
+    renderAll();
+
+}
+
+
+/* ============================================================
+   24. КНОПКА СОХРАНЕНИЯ
+   ============================================================ */
+
+function manualSave() {
+
+    saveData();
+
+    alert(
+        "Данные семейного бюджета сохранены в браузере."
+    );
+
+}
+
+
+/* ============================================================
+   25. ОБРАБОТЧИКИ КНОПОК
+   ============================================================ */
+
+document
+    .getElementById("addIncomeBtn")
+    .addEventListener(
+        "click",
+        addIncome
+    );
+
+
+document
+    .getElementById("addExpenseBtn")
+    .addEventListener(
+        "click",
+        addExpense
+    );
+
+
+document
+    .getElementById("clearBtn")
+    .addEventListener(
+        "click",
+        clearAll
+    );
+
+
+document
+    .getElementById("saveBtn")
+    .addEventListener(
+        "click",
+        manualSave
+    );
+
+
+savingGoalInput
+    .addEventListener(
+        "input",
+        updateSavings
+    );
+
+
+monthlySavingInput
+    .addEventListener(
+        "input",
+        updateSavings
+    );
+
+
+/* ============================================================
+   26. ДОБАВЛЕНИЕ ПО ENTER
+   ============================================================ */
+
+incomeName.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            addIncome();
+
+        }
+
+    }
+);
+
+
+incomeAmount.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            addIncome();
+
+        }
+
+    }
+);
+
+
+expenseName.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            addExpense();
+
+        }
+
+    }
+);
+
+
+expenseAmount.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            addExpense();
+
+        }
+
+    }
+);
+
+
+/* ============================================================
+   27. ЗАПУСК ПРИ ОТКРЫТИИ СТРАНИЦЫ
+   ============================================================ */
+
+loadData();
+
+renderAll();
+
+</script>
+
+</body>
+</html>
+```

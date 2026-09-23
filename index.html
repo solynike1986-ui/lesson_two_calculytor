@@ -6,6 +6,19 @@
     <title>Семейный бюджет — учёт доходов и расходов</title>
     <meta name="description" content="Простой семейный калькулятор бюджета: доходы, расходы, финансовая цель, анализ и экспорт в CSV. Данные остаются в вашем браузере.">
     <link rel="stylesheet" href="css/styles.css">
+    <script>
+        (function () {
+            var saved = null;
+            try {
+                saved = localStorage.getItem("familyBudgetTheme");
+            } catch (e) {}
+            var dark = saved === "dark" || (
+                saved !== "light" &&
+                window.matchMedia("(prefers-color-scheme: dark)").matches
+            );
+            document.documentElement.classList.toggle("dark", dark);
+        })();
+    </script>
 </head>
 <body>
 <div class="container">
@@ -24,7 +37,14 @@
                     <a href="index.html" aria-current="page">Главная</a>
                     <a href="app.html">Калькулятор</a>
                 </nav>
-                <button class="theme-btn" id="themeBtn" title="Переключить тему">🌙</button>
+                <button
+                    class="theme-btn"
+                    id="themeBtn"
+                    type="button"
+                    title="Переключить тему"
+                    aria-pressed="false"
+                    aria-label="Включить тёмную тему"
+                >🌙</button>
             </div>
         </div>
     </header>
@@ -120,4 +140,5 @@
 
 <script src="js/theme.js"></script>
 </body>
+</html>
 </html>
